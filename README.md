@@ -54,12 +54,9 @@ Automatic userstamping can be turned off globally by setting:
 
     ActiveRecord::Base.record_userstamps = false
 
-<<<<<<< HEAD
-Blamer adds a *userstamps* migration helper which will add the created_by and
+
+Blamer adds a `userstamps` migration helper which will add the created_by and
 updated_by columns (or your custom column names) to your table:
-=======
-Blamer adds a `userstamps` migration helper which will add the created_by and updated_by columns (or your custom column names) to your table:
->>>>>>> origin/fix_deprecation
 
     create_table :widgets do |t|
       t.string :name
