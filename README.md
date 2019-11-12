@@ -2,9 +2,9 @@
 
 [![Version](http://img.shields.io/gem/v/blamer.svg?style=flat)](https://rubygems.org/gems/blamer)
 [![Build Status](http://img.shields.io/travis/infused/blamer/master.svg?style=flat)](http://travis-ci.org/infused/blamer)
-[![Code Quality](http://img.shields.io/codeclimate/github/infused/blamer.svg?style=flat)](https://codeclimate.com/github/infused/blamer)
-[![Test Coverage](http://img.shields.io/codeclimate/coverage/github/infused/blamer.svg?style=flat)](https://codeclimate.com/github/infused/blamer)
-[![Dependency Status](http://img.shields.io/gemnasium/infused/blamer.svg?style=flat)](https://gemnasium.com/infused/blamer)
+[![Code Quality](http://img.shields.io/codeclimate/maintainability/infused/blamer.svg?style=flat)](https://codeclimate.com/github/infused/blamer)
+[![Total Downloads](https://img.shields.io/gem/dt/blamer.svg)](https://rubygems.org/gems/blamer/)
+[![License](https://img.shields.io/github/license/infused/blamer.svg)](https://github.com/infused/blamer)
 
 Automatically userstamps create and update operations if the table has columns
 named *created_by* and/or *updated_by*.  The Blamer gem attempts to mirror the
@@ -17,7 +17,7 @@ involves assigning to `Thread.current[:current_user]` in a controller before
 filter:
 
     class ApplicationController < ActionController::Base
-      before_filter :set_userstamp
+      before_action :set_userstamp
 
       def set_userstamp
         Thread.current[:current_user] = User.find(session[:user_id])
@@ -32,10 +32,17 @@ any of your models. For example, to use Person.current:
       Person.current
     end
 
+A default/fallback userstamp_object can be set if you never want to set the userstamps to nil be defining a `default_userstamp_object` method in your model:
+
+    def default_userstamp_object
+      Person.find_by(name: 'Admin')
+    end
+
 If you don't like created_by/updated_by you can customize the column names:
 
     # Globally in environment.rb
     ActiveRecord::Base.created_userstamp_column = :creator_id
+    ActiveRecord::Base.updated_userstamp_column = :updator_id
 
     # In a model definition
     class Subscription
@@ -47,8 +54,12 @@ Automatic userstamping can be turned off globally by setting:
 
     ActiveRecord::Base.record_userstamps = false
 
+<<<<<<< HEAD
 Blamer adds a *userstamps* migration helper which will add the created_by and
 updated_by columns (or your custom column names) to your table:
+=======
+Blamer adds a `userstamps` migration helper which will add the created_by and updated_by columns (or your custom column names) to your table:
+>>>>>>> origin/fix_deprecation
 
     create_table :widgets do |t|
       t.string :name
@@ -56,19 +67,40 @@ updated_by columns (or your custom column names) to your table:
       t.userstamps
     end
 
+## Thread Safety
+
+If you need thread safety make sure that your implementation of `User.current_user` (or your custom user object) is thread safe.  Here's one way this can be accomplished:
+
+    class User < ActiveRecord::Base
+      def self.current_user
+        Thread.current[:current_user]
+      end
+
+      def self.current_user=(user)
+        Thread.current[:current_user] = user
+      end
+    end
+
+## Compatability
+
+Blamer is tested to be compatible with Rails 2.x, 3.x, 4.x, and 5.x. See version specific Installation
+instructions below.
 
 ## Installation
 
 You must use the correct version of blamer for the version of Rails you are running:
 
+### Rails 4 and Rails 5
 
-### Rails 2.x
+Add to your Gemfile
 
-Add a line to your environment.rb
+    gem 'blamer'
 
-    config.gem 'blamer', '~> 3.0.0'
+Or
 
-### Rails 3.0, 3.1 and 3.2
+    gem 'blamer', github: 'infused/blamer'
+
+### Rails 3.x
 
 Add to your Gemfile
 
@@ -78,26 +110,20 @@ Or
 
     gem 'blamer', :github => 'infused/blamer', :branch => '3_stable'
 
-### Rails 4.0, 4.1 and 4.2
+### Rails 2.x
 
-Add to your Gemfile
+Add a line to your environment.rb
 
-    gem 'blamer', '~> 4.0.0'
+    config.gem 'blamer', '~> 3.0.0'
 
-Or
-
-gem 'blamer', :github => 'infused/blamer'
-
-
-## Credit
+## Credits
 
 Thanks to DeLynn Berry <delynn@gmail.com> for writing the original Userstamp plugin
 (http://github.com/delynn/userstamp/), which was the inspiration for this plugin.
 
-
 ## License
 
-Copyright (c) 2008-2015 Keith Morrison <<keithm@infused.org>>
+Copyright (c) 2008-2018 Keith Morrison <<keithm@infused.org>>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation

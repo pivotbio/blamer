@@ -3,7 +3,7 @@ $:.unshift lib unless $:.include?(lib)
 
 Gem::Specification.new do |s|
   s.name = 'blamer'
-  s.version = '5.0.0'
+  s.version = '5.1.0'
   s.authors = ['Keith Morrison']
   s.email = 'keithm@infused.org'
   s.homepage = 'http://github.com/infused/blame'
@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.required_rubygems_version = '>= 1.3.0'
-  s.add_dependency 'activerecord', '> 4.0.8', '<= 5.1.2'
+  s.add_dependency 'activerecord', '> 4.0.8', "<= 5.1.2"
 end
